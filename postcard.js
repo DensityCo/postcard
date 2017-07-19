@@ -5,6 +5,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const fetch = require('node-fetch');
 const minify = require('html-minifier').minify;
 const reactDOM = require('react-dom/server');
+const htmlToText = require('html-to-text');
 
 // Register babel to be used with any required react components.
 require('babel-register')({
@@ -12,7 +13,7 @@ require('babel-register')({
 });
 // Also, set react as a global so that all react components don't have to manually import `React`.
 // This is done for convenience but more importantly because we want to control what version of
-// React is used so that it matches the version of `react-dom` that is used.
+// React is used so that it matches the version of `react-dom` that is used in postcard.
 global.React = require('react');
 
 // Wrap sass renderer in a promise.
@@ -93,7 +94,12 @@ async function postcard(options) {
     minifyJS: true,
   });
 
-  return minified;
+  // If plaintext is expected, then strip out all html tags.
+  if (options.plaintext) {
+    return htmlToText.fromString(minified, {});
+  } else {
+    return minified;
+  }
 }
 
 // Export for use in commonjs / es6 modules.
@@ -107,6 +113,7 @@ if (require.main === module) {
     html: argv.html || argv._[0] || null,
     react: argv.react,
     styles: argv.styles || argv.scss || argv.css || null,
+    plaintext: argv.plaintext || argv.text || argv.txt,
     help: argv.help || argv.h || argv['?'],
   };
 
@@ -114,6 +121,7 @@ if (require.main === module) {
     console.log('./postcard [OPTIONS] [html input file]');
     console.log('Options:')
     console.log('* --styles: Pass an optional stylesheet to be added to the email. Supports sass.');
+    console.log('* --plaintext: Output the email in plain text form, stripping out all html tags.');
     console.log();
     console.log('Output is printed to stdout. All logs are printed to stderr to easily facilitate piping logs to one place and the output to another place.');
     console.log();

@@ -17,6 +17,7 @@
     "babel-register": "^6.24.1",
     "fsp": "^0.1.2",
     "html-minifier": "^3.5.2",
+    "html-to-text": "^3.3.0",
     "minimist": "^1.2.0",
     "node-sass": "^4.5.3",
     "react": "^15.6.1",
