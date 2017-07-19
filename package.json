@@ -1,6 +1,6 @@
 {
   "name": "@density/postcard",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A framework for creating html emails in react or with plain html.",
   "main": "postcard.js",
   "author": "Density <engineering+javascript@density.io>",
