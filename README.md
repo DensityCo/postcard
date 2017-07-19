@@ -1,6 +1,6 @@
 # Postcard
 
-An email generator written in React.
+A email generator written in React.
 
 HTML emails are hard. Ideally, we want to support [various email clients, ancient and
 modern](https://www.campaignmonitor.com/css/) while also being able to write the email in modern

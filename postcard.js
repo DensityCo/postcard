@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require('fsp');
 const argv = require('minimist')(process.argv.slice(2));
 const fetch = require('node-fetch');

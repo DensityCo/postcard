@@ -1,12 +1,15 @@
 {
-  "name": "email-framework",
+  "name": "@density/postcard",
   "version": "0.0.1",
-  "description": "A framework for creating html emails.",
-  "main": "index.js",
+  "description": "A framework for creating html emails in react or with plain html.",
+  "main": "postcard.js",
   "author": "Density <engineering+javascript@density.io>",
   "license": "MIT",
   "scripts": {
     "test": "jest"
+  },
+  "bin": {
+    "postcard": "postcard.js"
   },
   "dependencies": {
     "babel-preset-es2015": "^6.24.1",
