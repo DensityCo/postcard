@@ -49,3 +49,18 @@ it('should output an email with a react component and a stylesheet', async () =>
 
   assert.deepEqual(response, '<style>p{color:red}</style><p style=color:red>foo</p>');
 });
+it('should output an email with a react component and a stylesheet in plaintext', async () => {
+  mockFs({
+    // A really basic component.
+    '/index.js': `module.exports = React.createElement('p', {}, 'foo')`,
+    '/styles.scss': 'p { color: red; }',
+  });
+
+  const response = await postcard({
+    react: '/index.js',
+    styles: '/styles.scss',
+    plaintext: true,
+  });
+
+  assert.deepEqual(response, 'foo');
+});
