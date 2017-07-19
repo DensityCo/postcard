@@ -1,5 +1,7 @@
 # Postcard
 
+[![CircleCI](https://circleci.com/gh/DensityCo/postcard/tree/master.svg?style=svg)](https://circleci.com/gh/DensityCo/postcard/tree/master)
+
 A email generator written in React.
 
 HTML emails are hard. Ideally, we want to support [various email clients, ancient and
