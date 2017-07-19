@@ -3,6 +3,8 @@ machine:
     version: 7.6
 
 dependencies:
+  pre:
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
   override:
     - yarn:
         timeout: 180 # timeout after 3 minutes
@@ -12,3 +14,8 @@ dependencies:
 test:
   override:
     - yarn test
+
+deployment:
+  branch: master
+  commands:
+    - npm publish .; exit 0
