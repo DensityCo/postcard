@@ -17,6 +17,9 @@ input, you provide a tree of stateless components and some scss, and we'll do a 
   This tool uses [Mailchimp's CSS inliner](https://templates.mailchimp.com/resources/inline-css/).
 - The HTML is minified to reduce byte count using the `html-minifier` package.
 
+## Docs
+Run `postcard --help`.
+
 ## React component example
 
 ```
