@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+const path = require('path');
 const fs = require('fsp');
 const argv = require('minimist')(process.argv.slice(2));
 const fetch = require('node-fetch');
@@ -44,6 +44,13 @@ async function postcard(options) {
     html = await fs.readFileP(options.html);
   } else if (options.react) {
     // Or render a react component to a string.
+
+    // Non absolute paths should be prepended with the pwd
+    if (!options.react.startsWith('/')) {
+      options.react = path.join(process.cwd(), options.react);
+    }
+
+    // Render the component.
     const component = require(options.react);
     html = reactDOM.renderToStaticMarkup(component.default || component);
   } else {
