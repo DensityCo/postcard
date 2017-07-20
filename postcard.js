@@ -75,7 +75,7 @@ async function postcard(options) {
   }
   const inlineResponse = await fetch('https://templates.mailchimp.com/services/inline-css/', {
     method: 'POST',
-    body: `html=${encodeURI(data)}`,
+    body: `html=${encodeURIComponent(data)}`,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
