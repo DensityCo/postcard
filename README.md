@@ -68,7 +68,3 @@ $ # Postcard will combine together and minify the two sources!
 $ postcard --html ./index.html --styles ./styles.js
 <style>.container{background-color:#fff;max-width:800px;margin:20px auto}</style><div class=container style="background-color:#fff;max-width:800px;margin:20px auto"><h1>Title</h1><p>lorem ipsum dolar set amet.</p></div>
 ```
-
-## Gotchas
-- When passing the `--react` parameter, the path is passed into a `require` call. This means
-  a `./` at the beginning isn't implicit - do `--react ./index.js`, not `--react index.js`!
