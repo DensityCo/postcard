@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      image: circleci/node:7.10
+      - image: circleci/node:7.10
 
     branches:
       only:
@@ -13,7 +13,7 @@ jobs:
       - checkout
       - run:
           name: "Add token to npmrc for publishing packages"
-          command:  echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
       - run:
           name: "Install dependencies"
           command: yarn
