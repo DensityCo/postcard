@@ -1,0 +1,30 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      image: circleci/node:7.10
+
+    branches:
+      only:
+        - master
+
+    steps:
+      - checkout
+      - run:
+          name: "Add token to npmrc for publishing packages"
+          command:  echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+      - run:
+          name: "Install dependencies"
+          command: yarn
+      - run:
+          name: "Run tests"
+          command: yarn test
+      - run:
+          name: "Deployment on master branch"
+          command: |
+            if [ "$CIRCLE_BRANCH" == "master" ]; then
+              set +e
+              npm publish .
+              set -e
+            fi
