@@ -4,6 +4,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:7.10
+    resource_class: small
 
     branches:
       only:
