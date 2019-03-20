@@ -1,6 +1,6 @@
 {
   "name": "@density/postcard",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A framework for creating html emails in react or with plain html.",
   "main": "postcard.js",
   "author": "Density <engineering+javascript@density.io>",
@@ -19,7 +19,7 @@
     "html-minifier": "^3.5.2",
     "html-to-text": "^3.3.0",
     "minimist": "^1.2.0",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.11.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1"
   },
