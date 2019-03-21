@@ -94,31 +94,18 @@ async function postcard(options) {
     throw new Error(`Mailchimp wasn't able to inline css: ${await inlineResponse.json()}`);
   }
 
-  // Step four: minify html to reduce byte count as much as possible.
-  let minified = minify(inlined, {
-    // The below are from https://www.npmjs.com/package/html-minifier#options-quick-reference.
-    // TODO: are there any others that could be safely done? Or is this good enough?
-    html5: true,
-    useShortDoctype: true,
-    removeAttributeQuotes: true,
-    collapseWhitespace: true,
-    removeComments: true,
-    minifyCSS: true,
-    minifyJS: true,
-  });
-
   if (options.prefix) {
-    minified = `${options.prefix}${minified}`;
+    inlined = `${options.prefix}${inlined}`;
   }
   if (options.suffix) {
-    minified = `${minified}${options.suffix}`;
+    inlined = `${inlined}${options.suffix}`;
   }
 
   // If plaintext is expected, then strip out all html tags.
   if (options.plaintext) {
-    return htmlToText.fromString(minified, {});
+    return htmlToText.fromString(inlined, {});
   } else {
-    return minified;
+    return inlined;
   }
 }
 

@@ -33,7 +33,7 @@ it('should output an email with a react component and a stylesheet', async () =>
 
   assert.deepEqual(
     response,
-    '<html><head><style>p{color:red}</style></head><body><p style=color:red>foo</p></body></html>'
+    '<html><head><style>p {\n  color: red; }\n</style></head><body><p style="color: red;">foo</p></body></html>'
   );
 });
 it('should output an email with a react component and stylesheet prefixed with some content', async () => {
@@ -59,7 +59,7 @@ it('should output an email with a react component and stylesheet prefixed with s
 
   assert.deepEqual(
     response,
-    'my prefix<html><head><style>p{color:red}</style></head><body><p style=color:red>foo</p></body></html>my suffix'
+    'my prefix<html><head><style>p {\n  color: red; }\n</style></head><body><p style="color: red;">foo</p></body></html>my suffix'
   );
 });
 
