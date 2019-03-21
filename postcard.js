@@ -147,6 +147,7 @@ if (require.main === module) {
     console.log('* --suffix: Define content to add after the document.');
     console.log();
     console.log('Output is printed to stdout. All logs are printed to stderr to easily facilitate piping logs to one place and the output to another place.');
+    console.log('To see an example of [javascript file containing react component], take a look at https://github.com/densityco/postcard#react-component-example');
     console.log();
     console.log('Example:');
     console.log('* ./postcard --styles foo.scss index.js');
