@@ -51,7 +51,7 @@ async function postcard(options) {
 
   // Step two: render the react component.
   if (!options.react) {
-    throw new Error('No source passed - please pass a react component with --react.');
+    throw new Error('No source passed - run postcard --help for help information.');
   }
 
   // Non absolute paths should be prepended with the pwd
@@ -151,6 +151,7 @@ if (require.main === module) {
     console.log();
     console.log('Example:');
     console.log('* ./postcard --styles foo.scss index.js');
+    return;
   }
 
   postcard(options).then(minified => {
