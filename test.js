@@ -2,8 +2,9 @@ const assert = require('assert');
 const mockFs = require('mock-fs');
 const postcard = require('./postcard');
 
-afterEach(() => {
+afterEach(done => {
   mockFs.restore();
+  setTimeout(() => done(), 100);
 });
 
 /* So a little preface before looking at these tests... Since postcard uses an internet
@@ -11,34 +12,17 @@ afterEach(() => {
  * Which means the tests take a bit to run. Better than nothing, but not great. Sorry.
  */
 
-it('should output an email with a file', async () => {
-  mockFs({
-    '/index.html': '<h1>Foo</h1>'
-  });
-
-  const response = await postcard({
-    html: '/index.html',
-  });
-
-  assert.deepEqual(response, '<h1>Foo</h1>');
-});
-it('should output an email with a file and stylesheet (and inline the stylesheet)', async () => {
-  mockFs({
-    '/index.html': '<h1>Foo</h1>',
-    '/styles.scss': 'h1 { color: red; }',
-  });
-
-  const response = await postcard({
-    html: '/index.html',
-    styles: '/styles.scss',
-  });
-
-  assert.deepEqual(response, '<style>h1{color:red}</style><h1 style=color:red>Foo</h1>');
-});
 it('should output an email with a react component and a stylesheet', async () => {
   mockFs({
     // A really basic component.
-    '/index.js': `module.exports = React.createElement('p', {}, 'foo')`,
+    '/index.js': `module.exports = ({head}) => {
+      return React.createElement('html', {},
+        React.createElement('head', {}, head),
+        React.createElement('body', {},
+          React.createElement('p', {}, 'foo')
+        )
+      );
+    }`,
     '/styles.scss': 'p { color: red; }',
   });
 
@@ -47,9 +31,39 @@ it('should output an email with a react component and a stylesheet', async () =>
     styles: '/styles.scss',
   });
 
-  assert.deepEqual(response, '<style>p{color:red}</style><p style=color:red>foo</p>');
+  assert.deepEqual(
+    response,
+    '<html><head><style>p{color:red}</style></head><body><p style=color:red>foo</p></body></html>'
+  );
 });
-it('should output an email with a react component and a stylesheet in plaintext', async () => {
+it('should output an email with a react component and stylesheet prefixed with some content', async () => {
+  mockFs({
+    // A really basic component.
+    '/index.js': `module.exports = ({head}) => {
+      return React.createElement('html', {},
+        React.createElement('head', {}, head),
+        React.createElement('body', {},
+          React.createElement('p', {}, 'foo')
+        )
+      );
+    }`,
+    '/styles.scss': 'p { color: red; }',
+  });
+
+  const response = await postcard({
+    react: '/index.js',
+    styles: '/styles.scss',
+    prefix: 'my prefix',
+    suffix: 'my suffix',
+  });
+
+  assert.deepEqual(
+    response,
+    'my prefix<html><head><style>p{color:red}</style></head><body><p style=color:red>foo</p></body></html>my suffix'
+  );
+});
+
+it('should output an email with a react component in plaintext', async () => {
   mockFs({
     // A really basic component.
     '/index.js': `module.exports = React.createElement('p', {}, 'foo')`,

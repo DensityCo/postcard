@@ -5,6 +5,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const fetch = require('node-fetch');
 const minify = require('html-minifier').minify;
 const reactDOM = require('react-dom/server');
+const react = require('react');
 const htmlToText = require('html-to-text');
 
 // Register babel to be used with any required react components.
@@ -37,27 +38,7 @@ function die(err) {
 }
 
 async function postcard(options) {
-  // Step one: read html, or render a react component.
-  let html;
-  if (options.html) {
-    // Render html from a file.
-    html = await fs.readFileP(options.html);
-  } else if (options.react) {
-    // Or render a react component to a string.
-
-    // Non absolute paths should be prepended with the pwd
-    if (!options.react.startsWith('/')) {
-      options.react = path.join(process.cwd(), options.react);
-    }
-
-    // Render the component.
-    const component = require(options.react);
-    html = reactDOM.renderToStaticMarkup(component.default || component);
-  } else {
-    throw new Error('No source passed - please pass a html file or a react component with --react.');
-  }
-
-  // Step two: render sass to css.
+  // Step one: render sass to css.
   let stylesheet = '';
   if (options.styles) {
     const styleData = await fs.readFileP(options.styles);
@@ -68,11 +49,36 @@ async function postcard(options) {
     stylesheet = css.toString();
   }
 
-  // Step three: inline all styles.
-  let data = html;
-  if (stylesheet && stylesheet.length > 0) {
-    data = `<style>${stylesheet}</style>${data}`;
+  // Step two: render the react component.
+  if (!options.react) {
+    throw new Error('No source passed - please pass a react component with --react.');
   }
+
+  // Non absolute paths should be prepended with the pwd
+  if (!options.react.startsWith('/')) {
+    options.react = path.join(process.cwd(), options.react);
+  }
+
+  // Render the component.
+  const exported = require(options.react);
+  const component = exported.default || exported;
+  if (typeof component !== 'function') {
+    throw new Error(`${options.react} should defaultly export a function that returns jsx!`);
+  }
+  const jsx = component({
+    // The email should include this head value in its head to that we can inject styles (and
+    // maybe more in the future, made it general on purpose) into the correct location into the
+    // document.
+    head: (
+      React.createElement(React.Fragment, {},
+        // Add stylesheet into the head of the document
+        React.createElement('style', {}, stylesheet)
+      )
+    )
+  });
+  let data = reactDOM.renderToStaticMarkup(jsx);
+
+  // Step three: inline all styles.
   const inlineResponse = await fetch('https://templates.mailchimp.com/services/inline-css/', {
     method: 'POST',
     body: `html=${encodeURIComponent(data)}`,
@@ -89,7 +95,7 @@ async function postcard(options) {
   }
 
   // Step four: minify html to reduce byte count as much as possible.
-  const minified = minify(inlined, {
+  let minified = minify(inlined, {
     // The below are from https://www.npmjs.com/package/html-minifier#options-quick-reference.
     // TODO: are there any others that could be safely done? Or is this good enough?
     html5: true,
@@ -100,6 +106,13 @@ async function postcard(options) {
     minifyCSS: true,
     minifyJS: true,
   });
+
+  if (options.prefix) {
+    minified = `${options.prefix}${minified}`;
+  }
+  if (options.suffix) {
+    minified = `${minified}${options.suffix}`;
+  }
 
   // If plaintext is expected, then strip out all html tags.
   if (options.plaintext) {
@@ -117,23 +130,26 @@ module.exports.default = postcard;
 if (require.main === module) {
   // Parse all passed options.
   const options = {
-    html: argv.html || argv._[0] || null,
-    react: argv.react,
+    react: argv.react || argv._[0] || null,
     styles: argv.styles || argv.scss || argv.css || null,
     plaintext: argv.plaintext || argv.text || argv.txt,
+    prefix: argv.prefix,
+    suffix: argv.suffix,
     help: argv.help || argv.h || argv['?'],
   };
 
   if (options.help) {
-    console.log('./postcard [OPTIONS] [html input file]');
+    console.log('./postcard [OPTIONS] [javascript file containing react component]');
     console.log('Options:')
     console.log('* --styles: Pass an optional stylesheet to be added to the email. Supports sass.');
     console.log('* --plaintext: Output the email in plain text form, stripping out all html tags.');
+    console.log('* --prefix: Define content to add before the document.');
+    console.log('* --suffix: Define content to add after the document.');
     console.log();
     console.log('Output is printed to stdout. All logs are printed to stderr to easily facilitate piping logs to one place and the output to another place.');
     console.log();
     console.log('Example:');
-    console.log('* ./postcard --styles foo.scss index.html');
+    console.log('* ./postcard --styles foo.scss index.js');
   }
 
   postcard(options).then(minified => {

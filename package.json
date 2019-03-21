@@ -20,8 +20,8 @@
     "html-to-text": "^3.3.0",
     "minimist": "^1.2.0",
     "node-sass": "^4.11.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
   },
   "devDependencies": {
     "jest": "^20.0.4",
