@@ -151,7 +151,7 @@ if (require.main === module) {
     console.log();
     console.log('Example:');
     console.log('* ./postcard --styles foo.scss index.js');
-    return;
+    process.exit(0);
   }
 
   postcard(options).then(minified => {
