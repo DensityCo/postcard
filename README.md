@@ -35,10 +35,23 @@ function Container(props) {
   return <div className="container">{props.children}</div>;
 }
 
-module.exports = <Container>
-  <h1>Title</h1>
-  <p>lorem ipsum dolar set amet.</p>
-</Container>;
+// A postcard module must defaultly export a function that will be called with render parameters.
+// Right now the only parameter is `head`, which is some jsx that must be injected into the <head>
+// of your email.
+module.exports = ({head}) => (
+  <html>
+    <head>
+      {/* head data is injected below */}
+      {head}
+    </head>
+    <body>
+      <Container>
+        <h1>Title</h1>
+        <p>lorem ipsum dolar set amet.</p>
+      </Container>
+    </body>
+  </html>
+);
 
 $ cat styles.scss
 .container {
@@ -47,24 +60,6 @@ $ cat styles.scss
   margin: 20px auto;
 }
 $ # Postcard will combine together and minify the two sources!
-$ postcard --react ./index.js --styles ./styles.js
-<style>.container{background-color:#fff;max-width:800px;margin:20px auto}</style><div class=container style="background-color:#fff;max-width:800px;margin:20px auto"><h1>Title</h1><p>lorem ipsum dolar set amet.</p></div>
-```
-
-## HTML example
-```
-$ cat index.html
-<div class="container">
-  <h1>Title</h1>
-  <p>lorem ipsum dolar set amet.</p>
-</div>
-$ cat styles.scss
-.container {
-  background-color: white;
-  max-width: 800px;
-  margin: 20px auto;
-}
-$ # Postcard will combine together and minify the two sources!
-$ postcard --html ./index.html --styles ./styles.js
+$ postcard ./index.js --styles ./styles.js
 <style>.container{background-color:#fff;max-width:800px;margin:20px auto}</style><div class=container style="background-color:#fff;max-width:800px;margin:20px auto"><h1>Title</h1><p>lorem ipsum dolar set amet.</p></div>
 ```
