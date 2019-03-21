@@ -7,6 +7,7 @@ const minify = require('html-minifier').minify;
 const reactDOM = require('react-dom/server');
 const react = require('react');
 const htmlToText = require('html-to-text');
+const pretty = require('pretty');
 
 // Register babel to be used with any required react components.
 require('babel-register')({
@@ -89,7 +90,7 @@ async function postcard(options) {
 
   let inlined;
   if (inlineResponse.ok) {
-    inlined = await inlineResponse.text();
+    inlined = pretty(await inlineResponse.text());
   } else {
     throw new Error(`Mailchimp wasn't able to inline css: ${await inlineResponse.json()}`);
   }
